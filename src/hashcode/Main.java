@@ -3,16 +3,13 @@ package hashcode;
 import io.shimmen.simpleascii.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        AsciiReader reader = new AsciiReader("redundancy.in");
+        AsciiReader reader = new AsciiReader("busy_day.in");
         reader.performRead();
 
         List<Integer> header = reader.nextLine().defaultSectionSplit().assertSectionCount(5).getSectionsAsInts(Radix.Decimal);
@@ -74,7 +71,51 @@ public class Main {
         }
 
 
+        {
+//            System.out.println(orders.get(orders.size()-1).getNumTotalItems());
+            Warehouse W0 = warehouses.get(0);
+            //W0.getProducts()
+            System.out.println("!");
+            List<Order> possibleOrders = filterImpossibleOrders(W0, orders);
+            //Collections.sort(orders, (o1, o2) -> o1.getNumTotalItems() - o2.getNumTotalItems());
+            Collections.sort(orders, (a, b) -> turnsRequired(W0.getPosition(), a.getTarget()) - turnsRequired(W0.getPosition(), b.getTarget()));
+            System.out.println(turnsRequired(W0.getPosition(), orders.get(orders.size()-1).getTarget()));
+        }
+
+
+
+
 
         AsciiWriter writer = new AsciiWriter("test.out");
+    }
+
+    public static int turnsRequired(Point a, Point b) {
+        int dc = a.getC() - b.getC();
+        int dr = a.getR() - b.getR();
+        return (int)Math.ceil(Math.sqrt(dc*dc + dr*dr));
+    }
+
+    public static List<Order> filterImpossibleOrders(Warehouse w, List<Order> orders) {
+        List<Order> filteredOrders = new ArrayList<>();
+        for (Order order : orders) {
+            boolean possible = true;
+            for (Integer product : order.getProducts().keySet()) {
+                if (w.getProducts().containsKey(product)) {
+                    int wAmount = w.getProducts().get(product);
+                    int oAmount = order.getProducts().get(product);
+                    if (oAmount > wAmount) {
+                        possible = false;
+                        break;
+                    }
+                } else {
+                    possible = false;
+                    break;
+                }
+            }
+            if (possible) {
+                filteredOrders.add(order);
+            }
+        }
+        return filteredOrders;
     }
 }

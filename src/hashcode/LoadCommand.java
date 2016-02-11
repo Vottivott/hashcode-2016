@@ -2,11 +2,11 @@ package hashcode;
 
 public class LoadCommand implements Command {
 
-    Drone drone;
+    SimulationDrone drone;
     Warehouse warehouse;
     int productId, count;
 
-    public LoadCommand(Drone drone, Warehouse warehouse, int productId, int count) {
+    public LoadCommand(SimulationDrone drone, Warehouse warehouse, int productId, int count) {
         this.drone = drone;
         this.warehouse = warehouse;
         this.productId = productId;

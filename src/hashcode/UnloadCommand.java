@@ -3,18 +3,18 @@ package hashcode;
 public class UnloadCommand implements Command {
 
     Drone drone;
-    Warehouse warehouse;
+    Point desination;
     int productId, count;
 
-    public UnloadCommand(Drone drone, Warehouse warehouse, int productId, int count) {
+    public UnloadCommand(Drone drone, Point desination, int productId, int count) {
         this.drone = drone;
-        this.warehouse = warehouse;
+        this.desination = desination;
         this.productId = productId;
         this.count = count;
     }
 
     @Override
     public String toString() {
-        return drone.getDroneIndex() + "U" + warehouse.getIndex() + "" + productId + "" + count;
+        return drone.getDroneIndex() + "U" + desination.getIndex() + "" + productId + "" + count;
     }
 }

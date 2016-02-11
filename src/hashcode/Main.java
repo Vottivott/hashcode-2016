@@ -4,13 +4,16 @@ import io.shimmen.simpleascii.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class Main {
 
-    // Global command list
-    static List<Command> commands = new ArrayList<>();
-
+    static List<SimulationDrone> drones;
+    static List<Warehouse> warehouses;
+    static Warehouse w0;
+    static int numTurns;
+    static List<Order> orders;
 
     //         id       weight
     static Map<Integer, Integer> productWeights = new HashMap<>();
@@ -24,7 +27,7 @@ public class Main {
         int rows = header.get(0);
         int columns = header.get(1);
         int numDrones = header.get(2);
-        int numTurns = header.get(3);
+        numTurns = header.get(3);
         int maxPayload = header.get(4);
         Drone.setMaxPayload(maxPayload);
 
@@ -34,7 +37,7 @@ public class Main {
             productWeights.put(i, productWeightsList.get(i));
         }
 
-        List<Warehouse> warehouses = new ArrayList<>();
+        warehouses = new ArrayList<>();
         int numWarehouses = reader.nextLine().defaultSectionSplit().assertSectionCount(1).getSectionAtIndexAsInt(0, Radix.Decimal);
         for (int warehouseIndex = 0; warehouseIndex < numWarehouses; warehouseIndex++) {
             List<Integer> position = reader.nextLine().defaultSectionSplit().assertSectionCount(2).getSectionsAsInts(Radix.Decimal);
@@ -44,7 +47,7 @@ public class Main {
             warehouses.add(new Warehouse(warehouseIndex, new Point(r, c), productsList));
         }
 
-        List<Order> orders = new ArrayList<>();
+        orders = new ArrayList<>();
         int numOrders = reader.nextLine().defaultSectionSplit().assertSectionCount(1).getSectionAtIndexAsInt(0, Radix.Decimal);
         for (int orderIndex = 0; orderIndex < numOrders; orderIndex++) {
             List<Integer> position = reader.nextLine().defaultSectionSplit().assertSectionCount(2).getSectionsAsInts(Radix.Decimal);
@@ -55,9 +58,9 @@ public class Main {
             orders.add(new Order(new Point(r, c), orderList));
         }
 
-        List<Drone> drones = new ArrayList<>();
+        drones = new ArrayList<>();
         for (int droneIndex = 0; droneIndex < numDrones; droneIndex++) {
-            drones.add(new Drone(droneIndex, warehouses.get(0)));
+            drones.add(new SimulationDrone(droneIndex, warehouses.get(0)));
         }
 
 
@@ -76,14 +79,21 @@ public class Main {
             //ordersToDestinations.put(order.getTarget(), orderCount + order.getProducts().size());
         }
 
+        w0 = warehouses.get(0);
+
+        // Start sim
+        Simulation sim = new Simulation();
+        sim.start();
+
 
         //
         // Perform strategy: default
         //
+        /*
         {
             // i = 0
 
-            Warehouse w0 = warehouses.get(0);
+         w0 = warehouses.get(0);
 
             for (Drone drone: drones) {
 
@@ -104,7 +114,7 @@ public class Main {
                 // Assign drone to order
                 for (Integer productId: first.getProducts().keySet()) {
 
-                    commands.add(new LoadCommand(drone, w0, productId, first.getProducts().get(productId)));
+                    //commands.add(new LoadCommand(drone, w0, productId, first.getProducts().get(productId)));
                 }
 
 
@@ -113,7 +123,7 @@ public class Main {
             }
 
         }
-
+*/
 
 
 

@@ -12,8 +12,6 @@ public class Main {
 
 
 
-        System.out.print(reader.nextLine().getSectionAtIndex(0));
-
-        AsciiWriter writer = new AsciiWriter(".out");
+        AsciiWriter writer = new AsciiWriter("test.out");
     }
 }

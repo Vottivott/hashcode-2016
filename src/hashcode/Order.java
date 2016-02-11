@@ -40,4 +40,14 @@ public class Order {
         }
         return count;
     }
+
+    public int getTotalWeight() {
+        int weight = 0;
+        for (Integer productId: products.keySet()) {
+            int count = products.get(productId);
+            int productWeight = Main.productWeights.get(productId);
+            weight += count * productWeight;
+        }
+        return weight;
+    }
 }

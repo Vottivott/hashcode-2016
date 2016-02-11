@@ -8,12 +8,14 @@ public class Drone {
     public static int MAXIMUM_LOAD;
 
 
+    int droneIndex;
     Point position;
 
     //          id       count
     private Map<Integer, Integer> inventory = new HashMap<>();
 
-    public Drone(Warehouse origin) {
+    public Drone(int droneIndex, Warehouse origin) {
+        this.droneIndex = droneIndex;
         this.position = origin.getPosition();
     }
 
@@ -28,8 +30,9 @@ public class Drone {
         inventory.put(id, currentCount - count);
     }
 
-
-
+    public int getDroneIndex() {
+        return droneIndex;
+    }
 
     public static void setMaxPayload(int maximumLoad) {
         MAXIMUM_LOAD = maximumLoad;

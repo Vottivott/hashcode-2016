@@ -4,8 +4,16 @@ import io.shimmen.simpleascii.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
+
+    // Global command list
+    static List<Command> commands = new ArrayList<>();
+
+
+    //         id       weight
+    static Map<Integer, Integer> productWeights = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
 
@@ -21,8 +29,6 @@ public class Main {
         Drone.setMaxPayload(maxPayload);
 
         int productCount = reader.nextLine().defaultSectionSplit().assertSectionCount(1).getSectionAtIndexAsInt(0, Radix.Decimal);
-        //  id       weight
-        Map<Integer, Integer> productWeights = new HashMap<>();
         List<Integer> productWeightsList = reader.nextLine().defaultSectionSplit().assertSectionCount(productCount).getSectionsAsInts(Radix.Decimal);
         for (int i = 0; i < productWeightsList.size(); i++) {
             productWeights.put(i, productWeightsList.get(i));
@@ -35,7 +41,7 @@ public class Main {
             int r = position.get(0);
             int c = position.get(1);
             List<Integer> productsList = reader.nextLine().defaultSectionSplit().assertSectionCount(productCount).getSectionsAsInts(Radix.Decimal);
-            warehouses.add(new Warehouse(new Point(r, c), productsList));
+            warehouses.add(new Warehouse(warehouseIndex, new Point(r, c), productsList));
         }
 
         List<Order> orders = new ArrayList<>();
@@ -51,7 +57,7 @@ public class Main {
 
         List<Drone> drones = new ArrayList<>();
         for (int droneIndex = 0; droneIndex < numDrones; droneIndex++) {
-            drones.add(new Drone(warehouses.get(0)));
+            drones.add(new Drone(droneIndex, warehouses.get(0)));
         }
 
 
@@ -71,15 +77,41 @@ public class Main {
         }
 
 
+        //
+        // Perform strategy: default
+        //
         {
-//            System.out.println(orders.get(orders.size()-1).getNumTotalItems());
-            Warehouse W0 = warehouses.get(0);
-            //W0.getProducts()
-            System.out.println("!");
-            List<Order> possibleOrders = filterImpossibleOrders(W0, orders);
-            //Collections.sort(orders, (o1, o2) -> o1.getNumTotalItems() - o2.getNumTotalItems());
-            Collections.sort(orders, (a, b) -> turnsRequired(W0.getPosition(), a.getTarget()) - turnsRequired(W0.getPosition(), b.getTarget()));
-            System.out.println(turnsRequired(W0.getPosition(), orders.get(orders.size()-1).getTarget()));
+            // i = 0
+
+            Warehouse w0 = warehouses.get(0);
+
+            for (Drone drone: drones) {
+
+                // Filter impossible orders (in terms of stock)
+                List<Order> possibleOrders = filterImpossibleOrders(w0, orders);
+
+                // Filter impossible orders (in terms of weight)
+                possibleOrders = filterImpossibleOrdersWeight(orders);
+
+                assert possibleOrders.size() > 0: "Handle this if it becomes a problem!";
+
+                // Sort by distance from w0
+                Collections.sort(possibleOrders, (a, b) -> turnsRequired(w0.getPosition(), a.getTarget()) - turnsRequired(w0.getPosition(), b.getTarget()));
+
+                // Get first in list...
+                Order first = possibleOrders.get(0);
+
+                // Assign drone to order
+                for (Integer productId: first.getProducts().keySet()) {
+
+                    commands.add(new LoadCommand(drone, w0, productId, first.getProducts().get(productId)));
+                }
+
+
+                //Collections.sort(orders, (o1, o2) -> o1.getNumTotalItems() - o2.getNumTotalItems());
+                //System.out.println(turnsRequired(w0.getPosition(), orders.get(orders.size()-1).getTarget()));
+            }
+
         }
 
 
@@ -93,6 +125,10 @@ public class Main {
         int dc = a.getC() - b.getC();
         int dr = a.getR() - b.getR();
         return (int)Math.ceil(Math.sqrt(dc*dc + dr*dr));
+    }
+
+    public static List<Order> filterImpossibleOrdersWeight(List<Order> orders) {
+        return orders.stream().filter((order) -> order.getTotalWeight() <= Drone.getMaximumLoad()).collect(Collectors.toList());
     }
 
     public static List<Order> filterImpossibleOrders(Warehouse w, List<Order> orders) {

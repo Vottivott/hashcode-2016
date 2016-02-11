@@ -12,11 +12,16 @@ public class Order {
     private Map<Integer, Integer> products = new HashMap<>();
 
 
-    public Order(Point target, List<Integer> productList) {
+    public Order(Point target, List<Integer> orderList) {
         this.target = target;
 
-        for (int productId = 0; productId < productList.size(); productId++) {
-            products.put(productId, productList.get(productId));
+        for (int item: orderList) {
+            if(!products.containsKey(item)) {
+                products.put(item, 0);
+            }
+
+            Integer currentCount = products.get(item);
+            products.put(item, currentCount + 1);
         }
     }
 

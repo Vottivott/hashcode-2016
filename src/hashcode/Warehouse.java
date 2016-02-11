@@ -16,7 +16,12 @@ public class Warehouse {
         this.position = position;
 
         for (int productId = 0; productId < productList.size(); productId++) {
-            products.put(productId, productList.get(productId));
+            if(!products.containsKey(productId)) {
+                products.put(productId, 0);
+            }
+
+            Integer currentCount = productList.get(productId);
+            products.put(productId, currentCount + 1);
         }
     }
 

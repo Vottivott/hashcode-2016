@@ -2,19 +2,19 @@ package hashcode;
 
 public class Point {
 
-    private int x, y;
+    private int r, c;
 
-    public Point(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Point(int r, int y) {
+        this.r = r;
+        this.c = y;
     }
 
-    public int getX() {
-        return x;
+    public int getR() {
+        return r;
     }
 
-    public int getY() {
-        return y;
+    public int getC() {
+        return c;
     }
 
 }

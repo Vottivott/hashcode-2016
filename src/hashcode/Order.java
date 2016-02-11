@@ -32,4 +32,12 @@ public class Order {
     public Map<Integer, Integer> getProducts() {
         return products;
     }
+
+    public int getNumTotalItems() {
+        int count = 0;
+        for (Integer productId: products.keySet()) {
+            count += products.get(productId);
+        }
+        return count;
+    }
 }

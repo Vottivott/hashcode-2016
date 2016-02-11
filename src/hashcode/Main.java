@@ -21,6 +21,7 @@ public class Main {
         int numDrones = header.get(2);
         int numTurns = header.get(3);
         int maxPayload = header.get(4);
+        Drone.setMaxPayload(maxPayload);
 
         int productCount = reader.nextLine().defaultSectionSplit().assertSectionCount(1).getSectionAtIndexAsInt(0, Radix.Decimal);
         //  id       weight
@@ -49,6 +50,27 @@ public class Main {
             int numItems = reader.nextLine().defaultSectionSplit().assertSectionCount(1).getSectionAtIndexAsInt(0, Radix.Decimal);
             List<Integer> orderList = reader.nextLine().defaultSectionSplit().assertSectionCount(numItems).getSectionsAsInts(Radix.Decimal);
             orders.add(new Order(new Point(r, c), orderList));
+        }
+
+        List<Drone> drones = new ArrayList<>();
+        for (int droneIndex = 0; droneIndex < numDrones; droneIndex++) {
+            drones.add(new Drone(warehouses.get(0)));
+        }
+
+
+
+        Map<Point, Integer> ordersToDestinations = new HashMap<>();
+        Map<Point, Integer> productsToDestinations = new HashMap<>();
+        for (Order order: orders) {
+            if (!ordersToDestinations.containsKey(order.getTarget())) {
+                ordersToDestinations.put(order.getTarget(), 0);
+                productsToDestinations.put(order.getTarget(), 0);
+            }
+            Integer orderCount = ordersToDestinations.get(order.getTarget());
+            ordersToDestinations.put(order.getTarget(), orderCount + 1);
+
+            //Integer productsCount = productsToDestinations.get(order.getTarget());
+            //ordersToDestinations.put(order.getTarget(), orderCount + order.getProducts().size());
         }
 
 

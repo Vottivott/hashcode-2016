@@ -17,4 +17,22 @@ public class Point {
         return c;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Point point = (Point) o;
+
+        if (r != point.r) return false;
+        return c == point.c;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = r;
+        result = 31 * result + c;
+        return result;
+    }
 }

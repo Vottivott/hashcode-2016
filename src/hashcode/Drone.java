@@ -31,7 +31,7 @@ public class Drone {
 
 
 
-    public static void setMaximumLoad(int maximumLoad) {
+    public static void setMaxPayload(int maximumLoad) {
         MAXIMUM_LOAD = maximumLoad;
     }
 
